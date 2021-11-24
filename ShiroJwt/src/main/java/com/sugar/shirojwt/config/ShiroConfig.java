@@ -3,8 +3,10 @@ package com.sugar.shirojwt.config;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -54,10 +56,36 @@ public class ShiroConfig {
         // 拦截规则
         Map<String,String> mp = new HashMap<>();
         mp.put("/login","anon");
-        mp.put("/user","authc,roles[admin]");
+        mp.put("/logout","logout");
         mp.put("/**","authc");
 
         factoryBean.setFilterChainDefinitionMap(mp);
         return factoryBean;
     }
+
+    /**
+     * 启用权限注解
+     * @return
+     */
+    @Bean
+    public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
+        creator.setProxyTargetClass(true);
+        return creator;
+    }
+
+    /**
+     * 开始 AOP 支持
+     * @param securityManager
+     * @return
+     */
+    @Bean
+    public AuthorizationAttributeSourceAdvisor sourceAdvisor(SecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        // 加入安全管理器
+        advisor.setSecurityManager(securityManager);
+        return advisor;
+    }
+
+
 }

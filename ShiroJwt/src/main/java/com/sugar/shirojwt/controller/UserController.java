@@ -10,6 +10,7 @@ import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,6 +51,7 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping("/user")
+    @RequiresRoles("admin")
     public Result getAllUser() {
         Page<User> page = new Page<>(1,5);
         return Result.SUCCESS("获取用户列表",userMapper.selectPage(page, null));
