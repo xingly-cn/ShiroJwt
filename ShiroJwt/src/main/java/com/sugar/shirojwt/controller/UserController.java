@@ -30,6 +30,9 @@ public class UserController {
 
     @RequestMapping("/")
     public String index() {
+        Subject subject = SecurityUtils.getSubject();
+        // 已经登录直接跳转成功页面
+        if (subject.isAuthenticated()) return "redirect:/success";
         return "login.html";
     }
 
