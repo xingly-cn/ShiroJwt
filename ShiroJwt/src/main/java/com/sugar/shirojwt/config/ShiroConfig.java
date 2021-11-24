@@ -28,7 +28,7 @@ public class ShiroConfig {
     }
 
     /**
-     * 认证
+     * 认证和角色权限控制
      * @return
      */
     @Bean
