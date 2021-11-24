@@ -54,6 +54,7 @@ public class ShiroConfig {
         // 拦截规则
         Map<String,String> mp = new HashMap<>();
         mp.put("/login","anon");
+        mp.put("/user","authc,roles[admin]");
         mp.put("/**","authc");
 
         factoryBean.setFilterChainDefinitionMap(mp);

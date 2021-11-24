@@ -50,7 +50,7 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping("/user")
-    public Result getAllUser(int n,int r) {
+    public Result getAllUser() {
         Page<User> page = new Page<>(1,5);
         return Result.SUCCESS("获取用户列表",userMapper.selectPage(page, null));
     }
