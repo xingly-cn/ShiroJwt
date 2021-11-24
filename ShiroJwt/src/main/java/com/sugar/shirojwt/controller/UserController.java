@@ -11,6 +11,7 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +55,10 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/user")
     @RequiresRoles("admin")
+    @RequiresPermissions({"add","del","view"})
     public Result getAllUser() {
         Page<User> page = new Page<>(1,5);
-        return Result.SUCCESS("获取用户列表",userMapper.selectPage(page, null));
+        return Result.SUCCESS("(三权限)获取用户列表",userMapper.selectPage(page, null));
     }
 
 
@@ -97,8 +99,9 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping("/article")
+    @RequiresPermissions("view")
     public Result article() {
-        return Result.SUCCESS("需要登陆才可以看的文章",null);
+        return Result.SUCCESS("(view)需要登陆才可以看的文章",null);
     }
 
     /**

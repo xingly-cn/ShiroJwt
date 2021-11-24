@@ -11,7 +11,9 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -49,7 +51,7 @@ public class ShiroRealm extends AuthorizingRealm {
     }
 
     /**
-     * 角色授权
+     * 角色/权限 授权
      * @param collection
      * @return
      */
@@ -67,9 +69,18 @@ public class ShiroRealm extends AuthorizingRealm {
         Set<String> roles = new HashSet<>();
         roles.add(user.getRole());
 
-        // 启用角色
+        // 设置权限
+        Set<String> permission = new HashSet<>();
+        List<String> strings = Arrays.asList(user.getPermission().split(","));
+        for (String s : strings) {
+            permission.add(s);
+        }
+
+        // 启用角色 和 权限
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         info.setRoles(roles);
+        info.setStringPermissions(permission);
+
 
         log.info("===========角色授权结束===========");
         return info;
