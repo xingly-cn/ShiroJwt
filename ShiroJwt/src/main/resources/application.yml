@@ -1,0 +1,8 @@
+
+
+spring:
+  datasource:
+    url: jdbc:mysql://8.142.199.134:3306/shirojwt
+    username: root
+    password: XNXxnx520
+    driver-class-name: com.mysql.cj.jdbc.Driver
