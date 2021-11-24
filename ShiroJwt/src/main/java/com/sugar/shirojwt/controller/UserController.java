@@ -10,11 +10,13 @@ import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -99,11 +101,15 @@ public class UserController {
         return Result.SUCCESS("需要登陆才可以看的文章",null);
     }
 
-
-
-
-
-
-
-
+    /**
+     * Shiro 角色/权限 认证失败 全局捕获
+     * @param throwable
+     * @return
+     */
+    @ResponseBody
+    @ExceptionHandler(AuthorizationException.class)
+    public Result rolesError(Throwable throwable) {
+        log.info("=====权限认证失败:" + throwable.toString() + "=====");
+        return Result.FAIL(throwable.toString());
+    }
 }
