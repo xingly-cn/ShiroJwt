@@ -6,6 +6,7 @@ import com.sugar.shirojwt.entity.User;
 import com.sugar.shirojwt.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -110,7 +111,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @ExceptionHandler(AuthorizationException.class)
+    @ExceptionHandler(ShiroException.class)
     public Result rolesError(Throwable throwable) {
         log.info("=====权限认证失败:" + throwable.toString() + "=====");
         return Result.FAIL(throwable.toString());
