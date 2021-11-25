@@ -1,9 +1,11 @@
 package com.sugar.shirojwt.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sugar.shirojwt.common.Result;
 import com.sugar.shirojwt.entity.User;
 import com.sugar.shirojwt.mapper.UserMapper;
+import com.sugar.shirojwt.uitls.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.ShiroException;
@@ -12,6 +14,7 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
@@ -21,6 +24,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.UnsupportedEncodingException;
 
 /**
  * @author sugar
@@ -63,29 +68,14 @@ public class UserController {
     }
 
 
+    @ResponseBody
     @RequestMapping("/login")
-    public String login(String username, String password, Model model) {
-        // 获取当前会话
-        Subject subject = SecurityUtils.getSubject();
-        // 未登录
-        if (!subject.isAuthenticated()) {
-            // 创建 token
-            UsernamePasswordToken token = new UsernamePasswordToken(username,password);
-            // 调用 Realm 认证
-            try {
-                subject.login(token);
-            }catch (UnknownAccountException e) {
-                model.addAttribute("error","账号不存在");
-                return "login.html";
-            }catch (IncorrectCredentialsException e) {
-                model.addAttribute("error","账号密码错误");
-                return "login.html";
-            }catch (DisabledAccountException e) {
-                model.addAttribute("error","账户禁用");
-                return "login.html";
-            }
-        }
-        return "redirect:/success";
+    public Result login(String username, String password) throws UnsupportedEncodingException {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getUsername,username);
+        User user = userMapper.selectOne(wrapper);
+        if (!user.getPassword().equals(password)) throw new UnauthenticatedException();
+        return Result.SUCCESS("登陆成功", JwtUtils.Create(username,password));
     }
 
 
