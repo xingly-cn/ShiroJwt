@@ -58,7 +58,7 @@ public class ShiroRealm extends AuthorizingRealm {
         User user = userMapper.selectOne(wrapper);
 
         if (user == null) throw new AuthenticationException(username + "账号不存在");
-
+        if (user.getStatus().equals("0")) throw new LockedAccountException("账户锁定");
         if(!JwtUtils.verifyToken(token,user.getPassword())) throw new AuthenticationException("账号或密码错误");
 
         log.info("===========认证成功===========");
@@ -97,7 +97,6 @@ public class ShiroRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         info.setRoles(roles);
         info.setStringPermissions(permission);
-
 
         log.info("===========角色授权结束===========");
         return info;
