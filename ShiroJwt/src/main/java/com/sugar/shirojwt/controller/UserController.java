@@ -101,9 +101,8 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @ExceptionHandler(ShiroException.class)
+    @ExceptionHandler(AuthorizationException.class)
     public Result rolesError(Throwable throwable) {
-        log.info("=====权限认证失败:" + throwable.toString() + "=====");
-        return Result.FAIL(throwable.toString());
+        return Result.FAIL("无权访问：" + throwable.toString());
     }
 }

@@ -1,6 +1,8 @@
 package com.sugar.shirojwt.config;
 
+import com.alibaba.fastjson.JSON;
 import com.sugar.shirojwt.common.JWTToken;
+import com.sugar.shirojwt.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * 自定义过滤器 - 基于 JWT 实现
@@ -48,7 +51,6 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         JWTToken token = new JWTToken(authorization);
         // 交给 realm 登陆
         getSubject(request,response).login(token);
-        log.warn("看见我说明，token没问题了");
         // 没有错误,说明登陆成功,返回 True
         return true;
     }
@@ -72,14 +74,20 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                 executeLogin(request,response);
             } catch (Exception e) {
                 // 登陆失败
-                log.info("========= 登陆失败 跳回 =========");
-                log.warn("危险：" + e.toString());
-                HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+                log.info("========= 登陆失败 =========");
+                HttpServletResponse rep = (HttpServletResponse) response;
+                rep.setStatus(401);
+                rep.setCharacterEncoding("UTF-8");
+                rep.setContentType("application/json; charset=utf-8");
+                PrintWriter out = null;
                 try {
-                    // 跳回 500 页面
-                    httpServletResponse.sendRedirect("/500");
+                    out = rep.getWriter();
+                    String err = JSON.toJSONString(Result.FAIL("无权访问:" + e));
+                    out.append(err);
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    log.error("登陆失败,返回信息失败 | " + ex);
+                }finally {
+                    if (out != null) out.close();
                 }
             }
         }
