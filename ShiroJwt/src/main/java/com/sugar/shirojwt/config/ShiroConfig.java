@@ -1,6 +1,5 @@
 package com.sugar.shirojwt.config;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;

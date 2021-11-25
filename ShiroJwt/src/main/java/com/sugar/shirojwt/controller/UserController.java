@@ -7,20 +7,12 @@ import com.sugar.shirojwt.entity.User;
 import com.sugar.shirojwt.mapper.UserMapper;
 import com.sugar.shirojwt.uitls.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.ShiroException;
-import org.apache.shiro.authc.DisabledAccountException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,20 +29,6 @@ public class UserController {
 
     @Autowired
     UserMapper userMapper;
-
-    @RequestMapping("/")
-    public String index() {
-        Subject subject = SecurityUtils.getSubject();
-        // 已经登录直接跳转成功页面
-        if (subject.isAuthenticated()) return "redirect:/success";
-        return "login.html";
-    }
-
-    @ResponseBody
-    @RequestMapping("/success")
-    public String success() {
-        return "JWT获取地方";
-    }
 
     @ResponseBody
     @RequestMapping("/500")
@@ -79,15 +57,6 @@ public class UserController {
     }
 
 
-    @RequestMapping("/logout")
-    public String logout() {
-        // 获取当前会话
-        Subject subject = SecurityUtils.getSubject();
-        subject.logout();
-        log.info("============退出成功============");
-        return "login.html";
-    }
-
     @ResponseBody
     @RequestMapping("/article")
     @RequiresPermissions("view")
@@ -96,7 +65,7 @@ public class UserController {
     }
 
     /**
-     * Shiro 角色/权限 认证失败 全局捕获
+     * AuthorizationException 拦截
      * @param throwable
      * @return
      */

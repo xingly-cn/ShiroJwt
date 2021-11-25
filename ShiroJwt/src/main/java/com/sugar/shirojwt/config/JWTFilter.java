@@ -74,7 +74,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
                 executeLogin(request,response);
             } catch (Exception e) {
                 // 登陆失败
-                log.info("========= 登陆失败 =========");
+                log.error("========= 登陆失败 =========");
                 HttpServletResponse rep = (HttpServletResponse) response;
                 rep.setStatus(401);
                 rep.setCharacterEncoding("UTF-8");
