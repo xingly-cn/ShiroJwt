@@ -5,6 +5,7 @@ import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -12,6 +13,7 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.Filter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,20 +58,20 @@ public class ShiroConfig {
     @Bean
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
-        factoryBean.setSecurityManager(securityManager);
 
-        // 基本页面
-        factoryBean.setLoginUrl("/");
-        factoryBean.setSuccessUrl("/success");
+        // 添加自定义过滤器
+        Map<String, Filter> filterMap = new HashMap<>();
+        filterMap.put("jwt",new JWTFilter());
+        factoryBean.setFilters(filterMap);
+
+        factoryBean.setSecurityManager(securityManager);
         factoryBean.setUnauthorizedUrl("/500");
 
-        // 拦截规则
-        Map<String,String> mp = new HashMap<>();
-        mp.put("/login","anon");
-        mp.put("/logout","logout");
-        mp.put("/**","authc");
-
-        factoryBean.setFilterChainDefinitionMap(mp);
+        // 自定义拦截规则
+        Map<String,String> filterRuleMap = new HashMap<>();
+        filterRuleMap.put("/**","jwt");
+        filterRuleMap.put("/500","anon");
+        factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return factoryBean;
     }
 
@@ -82,6 +84,15 @@ public class ShiroConfig {
         DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
         creator.setProxyTargetClass(true);
         return creator;
+    }
+
+    /**
+     * 生命周期控制
+     * @return
+     */
+    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
     }
 
     /**
