@@ -1,6 +1,8 @@
 package com.sugar.shirojwt.config;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
+import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -26,6 +28,14 @@ public class ShiroConfig {
     public SecurityManager securityManager(Realm myRealm) {
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
         manager.setRealm(myRealm);
+
+        // 关闭 Shiro 自带 Session
+        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
+        DefaultSessionStorageEvaluator evaluator = new DefaultSessionStorageEvaluator();
+        evaluator.setSessionStorageEnabled(false);
+        subjectDAO.setSessionStorageEvaluator(evaluator);
+        manager.setSubjectDAO(subjectDAO);
+
         return manager;
     }
 
