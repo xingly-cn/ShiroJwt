@@ -31,10 +31,19 @@ public class JwtUtils {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public static String verifyToken(String token,String password) throws UnsupportedEncodingException {
+    public static boolean verifyToken(String token,String password) throws UnsupportedEncodingException {
         return JWT.require(Algorithm.HMAC256(password))
                         .build()
                         .verify(token)
-                        .getClaim("username").asString();
+                        .getClaim("username").asString() != null;
+    }
+
+    /**
+     * Token 获得 username
+     * @param token
+     * @return
+     */
+    public static String getUsername(String token) {
+        return JWT.decode(token).getClaim("username").asString();
     }
 }
