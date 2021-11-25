@@ -1,7 +1,7 @@
 package com.sugar.shirojwt.config;
 
 import com.sugar.shirojwt.common.JWTToken;
-import org.apache.shiro.authc.AuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +15,7 @@ import java.io.IOException;
 /**
  * 自定义过滤器 - 基于 JWT 实现
  */
+@Slf4j
 public class JWTFilter extends BasicHttpAuthenticationFilter {
 
     /**
@@ -47,6 +48,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         JWTToken token = new JWTToken(authorization);
         // 交给 realm 登陆
         getSubject(request,response).login(token);
+        log.warn("看见我说明，token没问题了");
         // 没有错误,说明登陆成功,返回 True
         return true;
     }
@@ -66,9 +68,12 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         if (isLoginAttempt(request,response)) {
             try {
                 // 用户想登陆,那就登陆
+                log.info("========= 请求登陆 =========");
                 executeLogin(request,response);
             } catch (Exception e) {
                 // 登陆失败
+                log.info("========= 登陆失败 跳回 =========");
+                log.warn("危险：" + e.toString());
                 HttpServletResponse httpServletResponse = (HttpServletResponse) response;
                 try {
                     // 跳回 500 页面
