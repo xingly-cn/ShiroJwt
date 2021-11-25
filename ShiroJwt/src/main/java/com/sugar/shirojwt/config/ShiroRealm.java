@@ -1,6 +1,7 @@
 package com.sugar.shirojwt.config;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.sugar.shirojwt.common.JWTToken;
 import com.sugar.shirojwt.entity.User;
 import com.sugar.shirojwt.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,17 @@ public class ShiroRealm extends AuthorizingRealm {
 
     @Autowired
     UserMapper userMapper;
+
+    /**
+     * 重写 Token 的载体为 JWTToekn
+     * JWTToekn 实现了 AuthenticationToken 接口
+     * @param token
+     * @return
+     */
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof JWTToken;
+    }
 
     /**
      * 认证方法
