@@ -11,3 +11,9 @@ spring:
     host: 175.27.243.243
     port: 6379
     password: 213879
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: beans

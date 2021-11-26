@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sugar.shirojwt.common.Result;
 import com.sugar.shirojwt.entity.User;
 import com.sugar.shirojwt.mapper.UserMapper;
+import com.sugar.shirojwt.uitls.JedisUtil;
 import com.sugar.shirojwt.uitls.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
@@ -29,6 +30,19 @@ public class UserController {
 
     @Autowired
     UserMapper userMapper;
+
+    /**
+     * 测试连接池是否可用
+     * @param k
+     * @param v
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/add")
+    public Result add(String k,String v) {
+        String ok = JedisUtil.setJson(k, v);
+        return Result.SUCCESS(ok,null);
+    }
 
     @ResponseBody
     @RequestMapping("/500")
