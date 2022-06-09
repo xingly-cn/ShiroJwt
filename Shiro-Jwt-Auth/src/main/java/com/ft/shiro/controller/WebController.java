@@ -62,14 +62,14 @@ public class WebController {
     @ApiOperation("是否拥有角色权限")
     @RequiresRoles("admin")
     public Response requireRole() {
-        return new Response(200, "缺少 admin 权限", null);
+        return new Response(200, "拥有 admin 权限", null);
     }
 
     @GetMapping("/require_permission")
     @ApiOperation("是否拥有资源权限")
     @RequiresPermissions(logical = Logical.AND, value = {"view"})
     public Response requirePermission() {
-        return new Response(200, "缺少 view 权限", null);
+        return new Response(200, "拥有 view 权限", null);
     }
 
     @RequestMapping(path = "/401")

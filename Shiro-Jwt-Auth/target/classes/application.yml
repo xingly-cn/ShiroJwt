@@ -2,6 +2,9 @@ server:
   port: 8001
 
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   datasource:
     username: shiro
     password: shiro
