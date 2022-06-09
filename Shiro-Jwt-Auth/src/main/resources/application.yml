@@ -1,0 +1,12 @@
+server:
+  port: 8001
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  datasource:
+    username: shiro
+    password: shiro
+    url: jdbc:mysql://175.27.243.243:3306/shiro?useUnicode=true&characterEncoding=utf8&useSSL=false
+    driverClassName: com.mysql.cj.jdbc.Driver
